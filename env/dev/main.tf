@@ -137,39 +137,55 @@ module "acm_alb" {
 module "eks" {
   source = "../../module/eks"
 
-  general_config                = var.general_config
-  eks_cluster_role              = module.iam_eks_cluster.iam_role_arn
-  private_subnet_ids            = module.network.private_subnet_ids
-  internal_sg_id                = module.internal_sg.security_group_id
-  eks_cluster_policy            = module.iam_eks_cluster.iam_policy_attachment_name
-  eks_service_policy            = module.iam_eks_service.iam_policy_attachment_name
-  fargate_profile_exec_role     = module.iam_fargate_profile_exec.iam_role_arn
-  fargate_profile_selector_name = var.fargate_profile_selector_name
+  general_config     = var.general_config
+  eks_cluster_role   = module.iam_eks_cluster.iam_role_arn
+  private_subnet_ids = module.network.private_subnet_ids
+  internal_sg_id     = module.internal_sg.security_group_id
+  eks_cluster_policy = module.iam_eks_cluster.iam_policy_attachment_name
+  eks_service_policy = module.iam_eks_service.iam_policy_attachment_name
 }
 
 module "eks_addon_1" {
   source = "../../module/eks_addon"
 
-  eks_cluster_name  = module.eks.eks_cluster_name
-  eks_addon_name    = "coredns"
-  eks_addon_version = "v1.8.7-eksbuild.2"
+  eks_cluster_name = module.eks.eks_cluster_name
+  eks_addon_name   = "coredns"
 }
 
 module "eks_addon_2" {
   source = "../../module/eks_addon"
 
-  eks_cluster_name  = module.eks.eks_cluster_name
-  eks_addon_name    = "kube-proxy"
-  eks_addon_version = "v1.23.7-eksbuild.1"
+  eks_cluster_name = module.eks.eks_cluster_name
+  eks_addon_name   = "kube-proxy"
 }
 
 module "eks_addon_3" {
   source = "../../module/eks_addon"
 
-  eks_cluster_name  = module.eks.eks_cluster_name
-  eks_addon_name    = "vpc-cni"
-  eks_addon_version = "v1.10.4-eksbuild.1"
+  eks_cluster_name = module.eks.eks_cluster_name
+  eks_addon_name   = "vpc-cni"
 }
+
+module "eks_fargate_pf_1" {
+  source = "../../module/eks_fargate_pf"
+
+  general_config                = var.general_config
+  eks_cluster_name              = module.eks.eks_cluster_name
+  private_subnet_ids            = module.network.private_subnet_ids
+  fargate_profile_exec_role     = module.iam_fargate_profile_exec.iam_role_arn
+  fargate_profile_selector_name = "kube-system"
+}
+
+module "eks_fargate_pf_2" {
+  source = "../../module/eks_fargate_pf"
+
+  general_config                = var.general_config
+  eks_cluster_name              = module.eks.eks_cluster_name
+  private_subnet_ids            = module.network.private_subnet_ids
+  fargate_profile_exec_role     = module.iam_fargate_profile_exec.iam_role_arn
+  fargate_profile_selector_name = var.fargate_profile_selector_name
+}
+
 
 ##IAM
 module "iam_eks_cluster" {

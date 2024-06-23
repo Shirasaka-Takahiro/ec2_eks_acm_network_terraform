@@ -5,8 +5,7 @@ resource "aws_vpc" "vpc" {
   enable_dns_hostnames = true
 
   tags = {
-    Name                     = "${var.general_config["project"]}-${var.general_config["env"]}-vpc",
-    "kubernetes.io/role/elb" = 1
+    Name = "${var.general_config["project"]}-${var.general_config["env"]}-vpc"
   }
 }
 
@@ -19,7 +18,8 @@ resource "aws_subnet" "public_subnets" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name = "${var.general_config["project"]}-${var.general_config["env"]}-public-${substr(each.value.az, -2, 2)}"
+    Name                       = "${var.general_config["project"]}-${var.general_config["env"]}-public-${substr(each.value.az, -2, 2)}",
+    "kubernetes.io/role/elb" = "1"
   }
 }
 
@@ -103,7 +103,7 @@ resource "aws_nat_gateway" "nat_gateway" {
 
 ## Nat Gateway Route
 resource "aws_route" "nat_gateway_route" {
-  for_each = var.private_subnets.subnets
+  for_each               = var.private_subnets.subnets
   nat_gateway_id         = aws_nat_gateway.nat_gateway.id
   route_table_id         = aws_route_table.private_route_tables[each.key].id
   destination_cidr_block = "0.0.0.0/0"
