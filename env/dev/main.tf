@@ -1,6 +1,6 @@
 ##Provider for ap-northeast-1
 provider "aws" {
-  profile    = "terraform-user"
+  #profile    = "terraform-user"
   access_key = var.access_key
   secret_key = var.secret_key
   region     = "ap-northeast-1"
@@ -145,6 +145,30 @@ module "eks" {
   eks_service_policy            = module.iam_eks_service.iam_policy_attachment_name
   fargate_profile_exec_role     = module.iam_fargate_profile_exec.iam_role_arn
   fargate_profile_selector_name = var.fargate_profile_selector_name
+}
+
+module "eks_addon_1" {
+  source = "../../module/eks_addon"
+
+  eks_cluster_name  = module.eks.eks_cluster_name
+  eks_addon_name    = "coredns"
+  eks_addon_version = "v1.8.7-eksbuild.2"
+}
+
+module "eks_addon_2" {
+  source = "../../module/eks_addon"
+
+  eks_cluster_name  = module.eks.eks_cluster_name
+  eks_addon_name    = "kube-proxy"
+  eks_addon_version = "v1.23.7-eksbuild.1"
+}
+
+module "eks_addon_3" {
+  source = "../../module/eks_addon"
+
+  eks_cluster_name  = module.eks.eks_cluster_name
+  eks_addon_name    = "vpc-cni"
+  eks_addon_version = "v1.10.4-eksbuild.1"
 }
 
 ##IAM

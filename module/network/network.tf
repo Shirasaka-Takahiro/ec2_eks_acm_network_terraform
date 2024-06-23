@@ -103,8 +103,9 @@ resource "aws_nat_gateway" "nat_gateway" {
 
 ## Nat Gateway Route
 resource "aws_route" "nat_gateway_route" {
+  for_each = var.private_subnets.subnets
   nat_gateway_id         = aws_nat_gateway.nat_gateway.id
-  route_table_id         = var.private_route_table_ids[0]
+  route_table_id         = aws_route_table.private_route_tables[each.key].id
   destination_cidr_block = "0.0.0.0/0"
 }
 
