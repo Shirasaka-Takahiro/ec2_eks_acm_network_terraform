@@ -18,7 +18,7 @@ resource "aws_subnet" "public_subnets" {
   map_public_ip_on_launch = true
 
   tags = {
-    Name                       = "${var.general_config["project"]}-${var.general_config["env"]}-public-${substr(each.value.az, -2, 2)}",
+    Name                     = "${var.general_config["project"]}-${var.general_config["env"]}-public-${substr(each.value.az, -2, 2)}",
     "kubernetes.io/role/elb" = "1"
   }
 }

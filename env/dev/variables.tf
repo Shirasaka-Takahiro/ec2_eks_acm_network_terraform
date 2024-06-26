@@ -204,6 +204,12 @@ variable "fargate_profile_exec_policy_name" {
 }
 
 ##EKS
+variable "fargate_profile_name_1" {
+  description = "Fargate profile name"
+  type        = string
+  default     = ""
+}
+
 variable "fargate_profile_selector_name" {
   description = "Fargate profile selector name"
   type        = string
